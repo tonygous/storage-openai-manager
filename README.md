@@ -25,7 +25,11 @@ This project is stateless by design:
 - Uploaded documents and file operations affect the OpenAI project associated with your API key.
 - Removing a Vector Store record is a live remote action. Deleting the underlying File object is a separate opt-in.
 
-Environment variables and Streamlit secrets are supported for private deployments. Never commit `.env` or `.streamlit/secrets.toml`; both are ignored by Git.
+The safest setup is to clone the project and run it locally. Only enter an API key into a local app or a trusted HTTPS deployment that you control. A third-party Streamlit deployment can receive values submitted through its form, even though this repository does not save them.
+
+This app intentionally ignores server environment variables and Streamlit secrets for OpenAI credentials. That prevents visitors to a public deployment from silently using the deployment owner's key. Every user must enter credentials for their own OpenAI project in the current session.
+
+The app does not include user authentication, rate limiting, or a credential vault, so it is not a turnkey public multi-user service. Add those controls before offering it as a hosted service to other people.
 
 ## Requirements
 
@@ -52,18 +56,6 @@ Open the local URL shown by Streamlit. In the sidebar:
 
 The fastest verification path is **Search** first, then **Ask**.
 
-## Optional server configuration
-
-Copy `.env.example` only for your own local setup and load those values in your shell or hosting service. The app checks these names:
-
-```text
-OPENAI_API_KEY
-OPENAI_VECTOR_STORE_ID
-OPENAI_PROMPT_ID
-```
-
-For Streamlit Community Cloud, add the same names in the app's private Secrets settings. Do not add a real `secrets.toml` to Git.
-
 ## Prompt ID compatibility
 
 If a Prompt ID is supplied, the app sends it through the Responses API `prompt` parameter and adds the connected Vector Store as a `file_search` tool. If the field is blank, the app uses `gpt-5.6-luna` by default and a small, tested prompt in `openai_manager.py`. The model remains editable in the sidebar's Advanced section.
@@ -76,11 +68,13 @@ OpenAI now recommends code-managed prompts for new text-generation work. Reusabl
 python -m pip install -r requirements-dev.txt
 python -m ruff check .
 python -m pytest
+python -m bandit -q -r app.py openai_manager.py
+python -m pip_audit -r requirements.txt -r requirements-dev.txt
 ```
 
-The repository-safety tests fail if source-business content, an email address, `.env`, database, log, bytecode file, private key, or common API-token format is added to the project.
+The repository-safety tests fail if source-business content, an email address, any `.env` file, database, log, bytecode file, private key, or common API-token format is added to the project. CI also runs a high-entropy secret scan.
 
-The included GitHub Actions workflow runs the same lint and test suite on Python 3.10 and 3.12 for every push and pull request.
+The included GitHub Actions workflow runs linting, tests, static security analysis, dependency auditing, and secret scanning on Python 3.10 and 3.12 for every push and pull request.
 
 ## Project layout
 
@@ -95,7 +89,7 @@ design-system/          UI decisions generated for this project
 ## Troubleshooting
 
 - **Authentication error:** confirm that the key belongs to the same OpenAI project as the Vector Store.
-- **Vector Store not found:** verify the `vs_…` ID and project access.
+- **Vector Store not found:** verify the `vs_...` ID and project access.
 - **Upload stays in progress:** refresh the Files page after OpenAI finishes processing.
 - **Search returns nothing:** verify file status, then try broader wording.
 - **Prompt request fails:** clear the Prompt ID and test the code-managed fallback. Existing saved prompts may also require variables that this generic manager does not know about.

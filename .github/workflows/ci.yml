@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -33,3 +33,15 @@ jobs:
 
       - name: Test
         run: python -m pytest
+
+      - name: Static security analysis
+        run: python -m bandit -q -r app.py openai_manager.py
+
+      - name: Dependency vulnerability audit
+        run: python -m pip_audit -r requirements.txt -r requirements-dev.txt
+
+      - name: Secret scan
+        run: >-
+          python -m detect_secrets scan --all-files
+          --exclude-files '(^|/)(\.git|\.pytest_cache|\.ruff_cache|__pycache__)(/|$)'
+          | python -c "import json, sys; results = json.load(sys.stdin)['results']; assert not any(results.values()), results"
