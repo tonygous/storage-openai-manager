@@ -2,7 +2,6 @@
 
 A clean, stateless Streamlit interface for connecting to an existing OpenAI Vector Store. It lets you inspect files, upload supported documents, test retrieval, and ask grounded questions through the Responses API.
 
-No API key, Vector Store ID, Prompt ID, knowledge-base content, database, log, or response history is included in this repository.
 
 ## What it does
 
