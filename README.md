@@ -99,6 +99,18 @@ design-system/          UI decisions generated for this project
 
 OpenAI API usage, Vector Store storage, file search, and model generation may incur charges. Documents, questions, and generated answers are sent to OpenAI under the policies and retention settings of your OpenAI project. The local app does not add its own analytics or persistence.
 
+## Support
+
+If this project helps you, you can support continued maintenance through [Ko-fi](https://ko-fi.com/antongoren).
+
+Crypto donations:
+
+- **Ethereum (ETH):** `0x47388f869b6B34fa2CD0c6Bb7C2787B86407CcfF`
+- **TRON:** `TF5NUf9eb7BPJ8HjCbSNFNaarHrtRTdbiA`
+- **Solana:** `HWVY559mMwqhiumTmZpjDick6XaMjehQE7W4v7ec5Kvg`
+
+Only send assets on the stated network. Cryptocurrency transfers are irreversible. Donations support documentation, testing, maintenance, and future releases; they do not purchase services or guarantee support.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
