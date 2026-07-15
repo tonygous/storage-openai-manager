@@ -100,7 +100,7 @@ design-system/          UI decisions generated for this project
 ## Troubleshooting
 
 - **Authentication error:** confirm that the key belongs to the same OpenAI project as the Vector Store.
-- **Vector Store not found:** verify the `vs_…` ID and project access.
+- **Vector Store not found:** verify the `vs_â€¦` ID and project access.
 - **Upload stays in progress:** refresh the Files page after OpenAI finishes processing.
 - **Search returns nothing:** verify file status, then try broader wording.
 - **Prompt request fails:** clear the Prompt ID and test the code-managed fallback. Existing saved prompts may also require variables that this generic manager does not know about.
@@ -113,3 +113,4 @@ OpenAI API usage, Vector Store storage, file search, and model generation may in
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
