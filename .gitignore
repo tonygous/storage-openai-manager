@@ -1,6 +1,5 @@
 .env
 .env.*
-!.env.example
 .streamlit/secrets.toml
 *.db
 *.db-journal

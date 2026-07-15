@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -118,23 +117,11 @@ def inject_styles() -> None:
     )
 
 
-def secret_value(name: str) -> str:
-    try:
-        value = st.secrets.get(name, "")
-    except Exception:
-        value = ""
-    return str(value or os.getenv(name, "")).strip()
-
-
 def current_settings() -> ConnectionSettings:
-    api_key = st.session_state.get("api_key_input", "").strip() or secret_value("OPENAI_API_KEY")
     return ConnectionSettings(
-        api_key=api_key,
-        vector_store_id=st.session_state.get("vector_store_input", "").strip()
-        or secret_value("OPENAI_VECTOR_STORE_ID"),
-        prompt_id=st.session_state.get("prompt_id_input", "").strip()
-        or secret_value("OPENAI_PROMPT_ID")
-        or None,
+        api_key=st.session_state.get("api_key_input", "").strip(),
+        vector_store_id=st.session_state.get("vector_store_input", "").strip(),
+        prompt_id=st.session_state.get("prompt_id_input", "").strip() or None,
         model=st.session_state.get("model_input", DEFAULT_MODEL).strip() or DEFAULT_MODEL,
     )
 
@@ -170,6 +157,10 @@ def render_sidebar() -> tuple[str, ConnectionSettings, bool]:
     with st.sidebar:
         st.subheader(APP_NAME)
         st.caption("Connect to your existing OpenAI storage without saving credentials locally.")
+        st.warning(
+            "Only enter a key on a local or trusted HTTPS deployment. "
+            "Never enter credentials into an app you do not control."
+        )
 
         page = st.radio(
             "Navigation",
@@ -183,18 +174,18 @@ def render_sidebar() -> tuple[str, ConnectionSettings, bool]:
             type="password",
             key="api_key_input",
             placeholder="Enter a project API key",
-            help="Kept in this Streamlit session only. Server environment secrets are also supported.",
+            help="Kept in this server-side Streamlit session and cleared with Clear session.",
         )
         st.text_input(
             "Vector Store ID",
             key="vector_store_input",
-            placeholder="vs_…",
+            placeholder="vs_...",
             help="Use the ID of an existing OpenAI Vector Store.",
         )
         st.text_input(
             "Prompt ID (optional, legacy)",
             key="prompt_id_input",
-            placeholder="pmpt_…",
+            placeholder="pmpt_...",
             help="If blank, the app uses its tested code-managed prompt and the model below.",
         )
         with st.expander("Advanced", expanded=False):
@@ -217,7 +208,7 @@ def render_sidebar() -> tuple[str, ConnectionSettings, bool]:
         if st.button("Connect", type="primary", use_container_width=True):
             try:
                 valid = settings.validated()
-                with st.spinner("Checking the Vector Store connection…"):
+                with st.spinner("Checking the Vector Store connection..."):
                     summary = connect_to_store(create_client(valid.api_key), valid.vector_store_id)
                 st.session_state["store_summary"] = summary
                 st.session_state["connection_fingerprint"] = settings_fingerprint(valid)

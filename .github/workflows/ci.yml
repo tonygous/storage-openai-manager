@@ -33,3 +33,15 @@ jobs:
 
       - name: Test
         run: python -m pytest
+
+      - name: Static security analysis
+        run: python -m bandit -q -r app.py openai_manager.py
+
+      - name: Dependency vulnerability audit
+        run: python -m pip_audit -r requirements.txt -r requirements-dev.txt
+
+      - name: Secret scan
+        run: >-
+          python -m detect_secrets scan --all-files
+          --exclude-files '(^|/)(\.git|\.pytest_cache|\.ruff_cache|__pycache__)(/|$)'
+          | python -c "import json, sys; results = json.load(sys.stdin)['results']; assert not any(results.values()), results"

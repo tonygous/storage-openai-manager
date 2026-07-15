@@ -31,9 +31,15 @@ def test_repository_has_no_runtime_data_artifacts():
     unsafe = [
         str(path.relative_to(ROOT))
         for path in project_files()
-        if path.suffix.lower() in FORBIDDEN_SUFFIXES or path.name == ".env"
+        if path.suffix.lower() in FORBIDDEN_SUFFIXES or path.name.startswith(".env")
     ]
     assert unsafe == []
+
+
+def test_public_app_has_no_server_credential_fallbacks():
+    source = (ROOT / "app.py").read_text(encoding="utf-8")
+    forbidden = ("st.secrets", "os.getenv", "OPENAI_API_KEY", "OPENAI_VECTOR_STORE_ID")
+    assert [value for value in forbidden if value in source] == []
 
 
 def test_repository_has_no_openai_shaped_secret_values():

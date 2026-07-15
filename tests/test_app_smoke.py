@@ -12,6 +12,7 @@ def clean_app(monkeypatch):
 def test_overview_renders_labeled_connection_form(monkeypatch):
     app = clean_app(monkeypatch)
     assert not app.exception
+    assert any("app you do not control" in warning.value for warning in app.warning)
     assert [item.label for item in app.text_input] == [
         "OpenAI API key",
         "Vector Store ID",
