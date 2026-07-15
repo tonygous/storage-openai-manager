@@ -83,6 +83,10 @@ The repository-safety tests fail if source-business content, an email address, `
 
 The included GitHub Actions workflow runs the same lint and test suite on Python 3.10 and 3.12 for every push and pull request.
 
+## Contributing
+
+Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and [SECURITY.md](SECURITY.md) for private security reporting guidance.
+
 ## Project layout
 
 ```text
